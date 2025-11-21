@@ -1,0 +1,56 @@
+﻿@model IEnumerable<BookM.Models.Event>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if(Model!=null)
+{
+<!-- 1. Hero Section (Banner) -->
+<div class="jumbotron p-5 mb-4 bg-dark text-white rounded-3" style="background: linear-gradient(45deg, #b91d47, #ee2a5d);">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Book your next experience</h1>
+        <p class="col-md-8 fs-4">Concerts, Cinema, Theater, and Sports in one place.</p>
+        <button class="btn btn-light btn-lg" type="button">Explore Events</button>
+    </div>
+</div>
+
+<!-- 2. Events Grid -->
+<div class="container">
+    <h2 class="mb-4 border-bottom pb-2">Upcoming Events</h2>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <!-- Placeholder image if you haven't implemented image uploading yet -->
+                    <img src="https://dummyimage.com/600x400/000/fff&text=@item.Title" class="card-img-top" alt="@item.Title">
+
+                    <div class="card-body">
+                       
+                        <h5 class="card-title">@item.Title</h5>
+                        <p class="card-text text-muted">
+                            <i class="bi bi-geo-alt-fill"></i> @item.Location
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">@item.EventDate.ToString("MMM dd, yyyy • HH:mm")</small>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <div class="d-grid gap-2">
+                            <!-- Link to Details Page (We will build this next) -->
+                            <a asp-controller="Events" asp-action="Details" asp-route-id="@item.EventId" class="btn btn-outline-danger">
+                                Book Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+}
+{
+<p>No events available.</p>
+}
