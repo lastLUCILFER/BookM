@@ -17,7 +17,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login"; // Where to send user if not logged in
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     });
-
+builder.Services.AddHttpClient<BookM.Services.TicketmasterService>();
+builder.Services.AddScoped<BookM.Services.TicketmasterService>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

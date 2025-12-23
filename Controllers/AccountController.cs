@@ -66,6 +66,23 @@ namespace BookM.Controllers
         [HttpPost]
         public IActionResult Register(string name, string email, string password)
         {
+            // Password Validation
+            if (password.Length < 6)
+            {
+                ViewBag.Error = "Password must be at least 6 characters long.";
+                return View();
+            }
+            if (!password.Any(char.IsUpper))
+            {
+                ViewBag.Error = "Password must contain at least one uppercase letter.";
+                return View();
+            }
+            if (!password.Any(ch => !char.IsLetterOrDigit(ch)))
+            {
+                ViewBag.Error = "Password must contain at least one special character.";
+                return View();
+            }
+
             if (_context.Users.Any(u => u.Email == email))
             {
                 ViewBag.Error = "Email already registered.";

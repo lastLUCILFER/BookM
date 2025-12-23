@@ -27,11 +27,11 @@ namespace BookM.Controllers
                                            .Take(4)
                                            .ToListAsync();
 
-            // 2. Get 4 "Important" upcoming events (happening soon)
-            // We filter for future dates and order by date
+            // 2. Get 4 "Highlights" for the CURRENT MONTH
+            var today = DateTime.Now;
             ViewBag.UpcomingEvents = await _context.Events
                                              .Include(e => e.Category)
-                                             .Where(e => e.EventDate >= DateTime.Now)
+                                             .Where(e => e.EventDate.Month == today.Month && e.EventDate.Year == today.Year)
                                              .OrderBy(e => e.EventDate)
                                              .Take(4)
                                              .ToListAsync();
@@ -44,7 +44,7 @@ namespace BookM.Controllers
             return View();
         }
 
-        public async Task<IActionResult> AllEvents(string category)
+        public async Task<IActionResult> AllEvents(string category, string searchString)
         {
             var query = _context.Events
                                 .Include(e => e.Category)
@@ -56,13 +56,25 @@ namespace BookM.Controllers
                 query = query.Where(e => e.Category.Name == category);
                 ViewData["Title"] = $"{category} Events";
             }
-            
+            else if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(s => s.Title.Contains(searchString) || s.Location.Contains(searchString));
+                ViewData["Title"] = $"Search: {searchString}";
+                ViewData["SearchString"] = searchString;
+            }
             else
             {
                 ViewData["Title"] = "All Events";
             }
 
             var events = await query.OrderBy(e => e.EventDate).ToListAsync();
+
+            // If a search was performed and exactly one result is found, redirect to details
+            if (!string.IsNullOrEmpty(searchString) && events.Count == 1)
+            {
+                return RedirectToAction("EventDetails", new { id = events[0].EventId });
+            }
+
             return View(events);
         }
 

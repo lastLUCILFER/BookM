@@ -11,6 +11,7 @@
             <tr>
                 <th>Title</th>
                 <th>Date</th>
+                <th>Location</th>
                 <th>Category</th>
                 <th>Actions</th>
             </tr>
@@ -21,15 +22,18 @@
                 <tr>
                     <td>@item.Title</td>
                     <td>@item.EventDate.ToString("d")</td>
+
+                    <td>@item.Location</td>
+
                     <td>
                         <span class="badge bg-secondary">@item.Category?.Name</span>
                     </td>
                     <td>
-                        <a asp-action="EditEvent" asp-route-id="@item.EventId" class="btn btn-sm btn-warning">Edit</a>
-
-                        <a asp-action="ManageTickets" asp-route-eventId="@item.EventId" class="btn btn-sm btn-info">Tickets</a>
-
-                        <a asp-action="DeleteEvent" asp-route-id="@item.EventId" class="btn btn-sm btn-danger">Delete</a>
+                        <div class="btn-group" role="group">
+                            <a asp-action="EditEvent" asp-route-id="@item.EventId" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="ManageTickets" asp-route-eventId="@item.EventId" class="btn btn-sm btn-info">Tickets</a>
+                            <a asp-action="DeleteEvent" asp-route-id="@item.EventId" class="btn btn-sm btn-danger">Delete</a>
+                        </div>
                     </td>
                 </tr>
             }

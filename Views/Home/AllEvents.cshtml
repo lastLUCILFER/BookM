@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<BookM.Models.Event>
 
 @{
-    ViewData["Title"] = "All Events";
+    // ViewData["Title"] is set in the controller
 }
 
-<div class="container">
-    <h2 class="mb-4 border-bottom pb-2">Upcoming Events</h2>
+<div class="container mb-5" style="margin-top: 20px;">
+    <h2 class="mb-4 border-bottom pb-2 text-white">@ViewData["Title"]</h2>
 
     
     @if (Model != null && Model.Any())

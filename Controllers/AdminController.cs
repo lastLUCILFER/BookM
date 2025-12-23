@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookM.Models;
-using Microsoft.AspNetCore.Mvc.Rendering; 
+using Microsoft.AspNetCore.Mvc.Rendering;
+using BookM.Services; 
 
 namespace BookM.Controllers
 {
@@ -10,10 +11,11 @@ namespace BookM.Controllers
     public class AdminController : Controller
     {
         private readonly BookMContext _context;
-
-        public AdminController(BookMContext context)
+        private readonly TicketmasterService _tmService;
+        public AdminController(BookMContext context, TicketmasterService tmService)
         {
             _context = context;
+            _tmService = tmService;
         }
 
         public async Task<IActionResult> Index()
@@ -26,6 +28,19 @@ namespace BookM.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ImportFromTicketmaster(string location)
+        {
+            // Update the fallback logic variable names
+            string searchLocation = string.IsNullOrEmpty(location) ? "New York" : location;
+
+            // Pass this to your service
+            // Note: You might need to update the method signature inside _tmService too!
+            int count = await _tmService.ImportEventsAsync(searchLocation);
+
+            TempData["Message"] = $"Success! Imported {count} events from {searchLocation}.";
+            return RedirectToAction(nameof(Index));
+        }
 
 
         public async Task<IActionResult> ManageCategories(int? editId)
