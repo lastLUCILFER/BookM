@@ -1,56 +1,94 @@
-﻿@model IEnumerable<BookM.Models.Event>
-
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
+    var sliderEvents = ViewBag.SliderEvents as IEnumerable<BookM.Models.Event>;
+    var upcomingEvents = ViewBag.UpcomingEvents as IEnumerable<BookM.Models.Event>;
 }
 
-@if(Model!=null)
-{
-<!-- 1. Hero Section (Banner) -->
-<div class="jumbotron p-5 mb-4 bg-dark text-white rounded-3" style="background: linear-gradient(45deg, #b91d47, #ee2a5d);">
-    <div class="container-fluid py-5">
-        <h1 class="display-5 fw-bold">Book your next experience</h1>
-        <p class="col-md-8 fs-4">Concerts, Cinema, Theater, and Sports in one place.</p>
-        <button class="btn btn-light btn-lg" type="button">Explore Events</button>
+<div id="eventCarousel" class="carousel slide mb-5 shadow-lg" data-bs-ride="carousel">
+
+    <div class="carousel-indicators">
+        @for (int i = 0; i < sliderEvents.Count(); i++)
+        {
+            <button type="button" data-bs-target="#eventCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="true"></button>
+        }
     </div>
+
+    <div class="carousel-inner" style="max-height: 500px;">
+        @{
+            int index = 0;
+        }
+        @foreach (var item in sliderEvents)
+        {
+            <div class="carousel-item @(index == 0 ? "active" : "")">
+                <div style="position:relative;">
+                    <img src="@item.ImageUrl" class="d-block w-100" style="object-fit: cover; height: 500px; filter: brightness(60%);" alt="@item.Title">
+                    <div class="carousel-caption d-none d-md-block text-start">
+                        <span class="badge bg-warning text-dark mb-2">@item.Category?.Name</span>
+                        <h1 class="display-4 fw-bold text-white">@item.Title</h1>
+                        <p class="lead text-white">@item.EventDate.ToString("f") • @item.Location</p>
+                        <a asp-controller="Home" asp-action="EventDetails" asp-route-id="@item.EventId" class="btn btn-danger btn-lg mt-2 fw-bold">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            index++;
+        }
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
 </div>
 
-<!-- 2. Events Grid -->
-<div class="container">
-    <h2 class="mb-4 border-bottom pb-2">Upcoming Events</h2>
+<div class="container mb-5">
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach (var item in Model)
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-light pb-2">
+        <h2 class="text-white">Highlights of the Month</h2>
+        <a asp-action="AllEvents" class="btn btn-outline-light">View All</a>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var item in upcomingEvents)
         {
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <!-- Placeholder image if you haven't implemented image uploading yet -->
-                    <img src="https://dummyimage.com/600x400/000/fff&text=@item.Title" class="card-img-top" alt="@item.Title">
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm hover-effect bg-dark bg-opacity-75 text-white">
+
+                    <img src="@item.ImageUrl" class="card-img-top" style="height: 200px; object-fit: cover;" alt="@item.Title">
 
                     <div class="card-body">
-                       
-                        <h5 class="card-title">@item.Title</h5>
-                        <p class="card-text text-muted">
-                            <i class="bi bi-geo-alt-fill"></i> @item.Location
+                        <span class="badge bg-danger mb-2">@item.Category?.Name</span>
+
+                        <h5 class="card-title text-truncate">@item.Title</h5>
+
+                        <p class="card-text text-white-50 small">
+                            <i class="bi bi-calendar"></i> @item.EventDate.ToString("MMM dd, yyyy")
                         </p>
-                        <p class="card-text">
-                            <small class="text-muted">@item.EventDate.ToString("MMM dd, yyyy • HH:mm")</small>
+
+                        <p class="card-text text-white-50 small text-truncate">
+                            <i class="bi bi-geo-alt"></i> @item.Location
                         </p>
                     </div>
-                    <div class="card-footer bg-white border-top-0">
-                        <div class="d-grid gap-2">
-                            <!-- Link to Details Page (We will build this next) -->
-                            <a asp-controller="Events" asp-action="Details" asp-route-id="@item.EventId" class="btn btn-outline-danger">
-                                Book Now
-                            </a>
-                        </div>
+
+                    <div class="card-footer bg-transparent border-top-0">
+                        <a asp-controller="Home" asp-action="Details" asp-route-id="@item.EventId" class="btn btn-outline-light w-100">View Details</a>
                     </div>
                 </div>
             </div>
         }
     </div>
 </div>
-}
-{
-<p>No events available.</p>
-}
+
+<style>
+    .hover-effect {
+        transition: transform 0.2s;
+    }
+
+        .hover-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important; /* Enhanced shadow on hover */
+        }
+</style>

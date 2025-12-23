@@ -1,0 +1,130 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Admin Dashboard";
+
+    // Unpack data from ViewBag
+    var categories = ViewBag.Categories as IEnumerable<BookM.Models.Category>;
+    var events = ViewBag.Events as IEnumerable<BookM.Models.Event>;
+    var users = ViewBag.Users as IEnumerable<BookM.Models.User>;
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-4 border-bottom border-light text-white">Admin Dashboard</h1>
+            <p class="lead text-white-50">Welcome back, Administrator.</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 bg-dark bg-opacity-75 text-white border-primary">
+                <div class="card-body text-center">
+                    <h3 class="card-title text-primary">@categories.Count()</h3>
+                    <p class="card-text text-white-50">Total Categories</p>
+                    <a asp-action="ManageCategories" class="btn btn-primary w-100">Manage Categories</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 bg-dark bg-opacity-75 text-white border-success">
+                <div class="card-body text-center">
+                    <h3 class="card-title text-success">@events.Count()</h3>
+                    <p class="card-text text-white-50">Total Events</p>
+                    <a asp-action="ManageEvents" class="btn btn-success w-100">Manage Events</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 bg-dark bg-opacity-75 text-white border-warning">
+                <div class="card-body text-center">
+                    <h3 class="card-title text-warning">@users.Count()</h3>
+                    <p class="card-text text-white-50">Registered Users</p>
+                    <button class="btn btn-warning w-100" disabled>Manage Users (Soon)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4 bg-dark bg-opacity-75 text-white border-secondary">
+        <div class="card-header border-secondary">
+            <h4 class="text-warning mb-0">Registered Users</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-dark table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in users)
+                    {
+                        <tr>
+                            <td>@user.Name</td>
+                            <td>@user.Email</td>
+                            <td>
+                                @if (user.IsAdmin)
+                                {
+                                    <span class="badge bg-danger">Admin</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">User</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-4 bg-dark bg-opacity-75 text-white border-secondary">
+        <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+            <h4 class="text-success mb-0">Recent Events</h4>
+            <a asp-action="ManageEvents" class="btn btn-sm btn-outline-success">Manage</a>
+        </div>
+        <div class="card-body">
+            <table class="table table-dark table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in events.Take(5)) // Show only top 5 here
+                    {
+                        <tr>
+                            <td>@item.Title</td>
+                            <td>@item.EventDate.ToString("d")</td>
+                            <td><span class="badge bg-secondary">@item.Category?.Name</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-5 bg-dark bg-opacity-75 text-white border-secondary">
+        <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+            <h4 class="text-primary mb-0">Categories</h4>
+            <a asp-action="ManageCategories" class="btn btn-sm btn-outline-primary">Manage</a>
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var item in categories)
+                {
+                    <span class="badge bg-secondary p-2 fs-6">@item.Name</span>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>

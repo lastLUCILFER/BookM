@@ -1,5 +1,6 @@
 using System;
 using BookM.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,23 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
  builder.Services.AddDbContext<BookMContext>(options =>
    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login"; // Where to send user if not logged in
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    });
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        // This runs the Initialize method we just created
-        BookM.Models.SeedData.Initialize(services);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred seeding the DB.");
-    }
-}
+
 // ---------------------
 //  Middleware
 // ---------------------
@@ -40,7 +35,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 // ---------------------
@@ -48,6 +43,6 @@ app.UseAuthorization();
 // ---------------------
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();

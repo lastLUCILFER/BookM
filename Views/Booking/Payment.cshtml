@@ -1,0 +1,47 @@
+﻿@model BookM.Models.Payment
+@{
+    ViewData["Title"] = "Payment";
+}
+
+<div class="container mt-5 text-white">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-dark bg-opacity-75 border border-secondary shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Checkout</h3>
+                </div>
+                <div class="card-body">
+
+                    <div class="alert alert-secondary bg-transparent border-secondary text-white">
+                        <h5>Order Summary</h5>
+                        <p class="mb-1">Event: <strong>@Model.Booking.Event.Title</strong></p>
+                        <p class="mb-1">Seats: <strong>@Model.Booking.SeatsBooked</strong></p>
+                        <hr class="border-secondary" />
+                        <h3 class="text-warning">Total: $@Model.Amount</h3>
+                    </div>
+
+                    <form asp-action="ProcessPayment" method="post">
+                        <input type="hidden" asp-for="BookingId" />
+                        <input type="hidden" asp-for="Amount" />
+
+                        <div class="mb-4">
+                            <label asp-for="PaymentMethod" class="form-label fw-bold text-white">Payment Method</label>
+                            <select asp-for="PaymentMethod" class="form-control">
+                                <option value="Credit Card">Credit Card</option>
+                                <option value="PayPal">PayPal</option>
+                                <option value="CMI">CMI (Morocco)</option>
+                                <option value="Cash">Pay at Venue</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning btn-lg fw-bold text-dark">
+                                <i class="bi bi-credit-card-2-front-fill"></i> Pay Now
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

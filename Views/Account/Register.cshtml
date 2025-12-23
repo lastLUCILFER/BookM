@@ -1,0 +1,67 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Register";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BookM</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="card shadow-lg border-0" style="width: 100%; max-width: 400px;">
+
+            <div class="card-header bg-dark text-white text-center py-3">
+                <h3 class="mb-0">Join BookM</h3>
+            </div>
+
+            <div class="card-body p-4">
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger text-center">@ViewBag.Error</div>
+                }
+
+                <form asp-action="Register" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Full Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="John Doe" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email Address</label>
+                        <input type="email" name="email" class="form-control" placeholder="name@example.com" required />
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Password</label>
+                        <input type="password" name="password" class="form-control" placeholder="Create a password" required />
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-dark btn-lg">Sign Up</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <span class="text-muted">Already have an account?</span>
+                    <a asp-action="Login" class="text-decoration-none fw-bold text-dark">Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

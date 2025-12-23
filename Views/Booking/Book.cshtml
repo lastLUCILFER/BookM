@@ -1,0 +1,59 @@
+﻿@model BookM.Models.Event
+@{
+    ViewData["Title"] = "Book Event";
+}
+
+<div class="container mt-5 text-white">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-dark bg-opacity-75 border border-secondary shadow-lg">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">Booking: @Model.Title</h3>
+                </div>
+                <div class="card-body">
+
+                    <form asp-action="CreateBooking" method="post">
+                        <input type="hidden" name="eventId" value="@Model.EventId" />
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-warning">Select Ticket Class</label>
+
+                            @if (Model.TicketTypes.Any())
+                            {
+                                <div class="list-group">
+                                    @foreach (var ticket in Model.TicketTypes)
+                                    {
+                                        <label class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-white border-secondary">
+                                            <span>
+                                                <input class="form-check-input me-2" type="radio" name="ticketTypeId" value="@ticket.TicketTypeId" required>
+                                                <strong>@ticket.Name</strong>
+                                                <br />
+                                                <small class="text-white-50">@ticket.QuantityAvailable left</small>
+                                            </span>
+                                            <span class="badge bg-success rounded-pill">$@ticket.Price</span>
+                                        </label>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger">No tickets defined for this event yet.</div>
+                            }
+                        </div>
+
+                        <div class="mb-4 ">
+                            <label class="form-label fw-bold text-white">How many seats?</label>
+                            <input type="number" name="seatsBooked" class="form-control" value="1" min="1" max="10" required />
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                Continue to Payment <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

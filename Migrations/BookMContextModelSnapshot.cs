@@ -41,6 +41,9 @@ namespace BookM.Migrations
                     b.Property<int>("SeatsBooked")
                         .HasColumnType("int");
 
+                    b.Property<int>("TicketTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -48,6 +51,8 @@ namespace BookM.Migrations
                         .HasName("PK__Booking__73951AED82D804E4");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("TicketTypeId");
 
                     b.HasIndex("UserId");
 
@@ -69,6 +74,28 @@ namespace BookM.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Category");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            Name = "Cinema"
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            Name = "Concert"
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            Name = "Sport"
+                        },
+                        new
+                        {
+                            CategoryId = 4,
+                            Name = "Theater"
+                        });
                 });
 
             modelBuilder.Entity("BookM.Models.Event", b =>
@@ -114,6 +141,56 @@ namespace BookM.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Event", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            EventId = 1,
+                            Capacity = 50000,
+                            CategoryId = 2,
+                            Description = "The biggest music festival in Morocco returns.",
+                            EventDate = new DateTime(2025, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "https://images.unsplash.com/photo-1459749411177-2a296581dca0?auto=format&fit=crop&w=600&q=80",
+                            Location = "OLM Souissi, Rabat",
+                            Ltype = "Outdoor",
+                            Title = "Mawazine Festival - Opening Night"
+                        },
+                        new
+                        {
+                            EventId = 2,
+                            Capacity = 45000,
+                            CategoryId = 3,
+                            Description = "The most anticipated football match of the season.",
+                            EventDate = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80",
+                            Location = "Complexe Mohammed V, Casablanca",
+                            Ltype = "Stadium",
+                            Title = "Wydad vs Raja - The Derby"
+                        },
+                        new
+                        {
+                            EventId = 3,
+                            Capacity = 200,
+                            CategoryId = 1,
+                            Description = "Watch the Christopher Nolan masterpiece in IMAX.",
+                            EventDate = new DateTime(2025, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80",
+                            Location = "Megarama, Casablanca",
+                            Ltype = "Indoor",
+                            Title = "Inception - Special Screening"
+                        },
+                        new
+                        {
+                            EventId = 4,
+                            Capacity = 1500,
+                            CategoryId = 4,
+                            Description = "An evening of laughter with the best comedians.",
+                            EventDate = new DateTime(2025, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?auto=format&fit=crop&w=600&q=80",
+                            Location = "Palais El Badi, Marrakech",
+                            Ltype = "Outdoor",
+                            Title = "Marrakech du Rire"
+                        });
                 });
 
             modelBuilder.Entity("BookM.Models.Payment", b =>
@@ -170,13 +247,41 @@ namespace BookM.Migrations
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<int>("QuantityAvailable")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.HasKey("TicketTypeId");
 
                     b.HasIndex("EventId");
 
                     b.ToTable("TicketType");
+
+                    b.HasData(
+                        new
+                        {
+                            TicketTypeId = 1,
+                            EventId = 1,
+                            Name = "Standard",
+                            Price = 450.00m,
+                            QuantityAvailable = 1000
+                        },
+                        new
+                        {
+                            TicketTypeId = 2,
+                            EventId = 1,
+                            Name = "VIP",
+                            Price = 800.00m,
+                            QuantityAvailable = 100
+                        },
+                        new
+                        {
+                            TicketTypeId = 3,
+                            EventId = 1,
+                            Name = "Golden Circle",
+                            Price = 1200.00m,
+                            QuantityAvailable = 50
+                        });
                 });
 
             modelBuilder.Entity("BookM.Models.User", b =>
@@ -212,6 +317,16 @@ namespace BookM.Migrations
                         .IsUnique();
 
                     b.ToTable("User", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            Email = "admin@bookm.com",
+                            IsAdmin = true,
+                            Name = "System Admin",
+                            PasswordHash = "pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM="
+                        });
                 });
 
             modelBuilder.Entity("BookM.Models.Booking", b =>
@@ -222,6 +337,12 @@ namespace BookM.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Booking_Event");
 
+                    b.HasOne("BookM.Models.TicketType", "TicketType")
+                        .WithMany()
+                        .HasForeignKey("TicketTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BookM.Models.User", "User")
                         .WithMany("Bookings")
                         .HasForeignKey("UserId")
@@ -229,6 +350,8 @@ namespace BookM.Migrations
                         .HasConstraintName("FK_Booking_User");
 
                     b.Navigation("Event");
+
+                    b.Navigation("TicketType");
 
                     b.Navigation("User");
                 });

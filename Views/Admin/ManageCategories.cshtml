@@ -1,0 +1,70 @@
+﻿@model IEnumerable<BookM.Models.Category>
+
+<div class="container mt-4">
+    <h2 class="display-4 border-bottom border-light text-white">Manage Categories</h2>
+
+    <div class="card my-3 bg-light">
+        <div class="card-body py-3">
+            <form asp-action="CreateCategory" method="post" class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label class="col-form-label fw-bold">New Category:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" name="name" class="form-control" placeholder="Enter name..." required />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-success">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped border align-middle">
+        <thead class="bg-dark text-white">
+            <tr>
+                <th>ID</th>
+                <th style="width: 50%;">Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CategoryId</td>
+
+                    @if (ViewBag.EditId == item.CategoryId)
+                    {
+                        <form asp-action="EditCategory" method="post">
+                            <input type="hidden" name="id" value="@item.CategoryId" />
+                        <td>
+                            <input type="text" name="name" value="@item.Name" class="form-control" />
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-sm btn-success">Save</button>
+                            <a asp-action="ManageCategories" class="btn btn-sm btn-secondary">Cancel</a>
+                        </td>
+                        </form>
+                    }
+                    else
+                    {
+                        <td>@item.Name</td>
+                        <td>
+                            <a asp-action="ManageCategories" asp-route-editId="@item.CategoryId" class="btn btn-sm btn-warning">
+                                Edit
+                            </a>
+
+                            <a asp-action="DeleteCategory" asp-route-id="@item.CategoryId"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Are you sure?');">
+                                Delete
+                            </a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-action="Index" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>

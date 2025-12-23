@@ -1,0 +1,71 @@
+﻿@model BookM.Models.Event
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" class="img-fluid rounded shadow-lg border border-secondary" alt="@Model.Title">
+            }
+            else
+            {
+                <img src="https://dummyimage.com/600x400/000/fff&text=@Model.Title" class="img-fluid rounded shadow-lg border border-secondary" alt="@Model.Title">
+            }
+        </div>
+
+        <div class="col-md-6 text-white">
+            <h1 class="display-5 fw-bold text-white">@Model.Title</h1>
+
+            <p class="mb-4">
+                <span class="badge bg-danger fs-6">@Model.Category?.Name</span>
+                <span class="badge bg-secondary fs-6 ms-2">@Model.Ltype</span>
+            </p>
+
+            <h4 class="text-warning border-bottom border-secondary pb-2">Event Details</h4>
+            <ul class="list-unstyled text-white-50 fs-5 mb-4">
+                <li class="mb-2"><i class="bi bi-calendar-event me-2 text-info"></i> <strong>Date:</strong> <span class="text-white">@Model.EventDate.ToString("f")</span></li>
+                <li class="mb-2"><i class="bi bi-geo-alt-fill me-2 text-danger"></i> <strong>Location:</strong> <span class="text-white">@Model.Location</span></li>
+                <li class="mb-2"><i class="bi bi-people-fill me-2 text-success"></i> <strong>Capacity:</strong> <span class="text-white">@Model.Capacity seats</span></li>
+            </ul>
+
+            <h4 class="text-warning border-bottom border-secondary pb-2">Description</h4>
+            <p class="text-white lead fs-6">@Model.Description</p>
+
+            <div class="card mt-4 bg-dark bg-opacity-75 border border-secondary shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-white border-bottom border-secondary pb-2 mb-3">Available Tickets</h5>
+
+                    @if (Model.TicketTypes != null && Model.TicketTypes.Any())
+                    {
+                        <ul class="list-group list-group-flush mb-3">
+                            @foreach (var ticket in Model.TicketTypes)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-white border-secondary">
+                                    <span>@ticket.Name</span>
+                                    <span class="badge bg-success rounded-pill fs-6">$@ticket.Price</span>
+                                </li>
+                            }
+                        </ul>
+                        <a asp-controller="Booking" asp-action="Book" asp-route-eventId="@Model.EventId" class="btn btn-danger btn-lg w-100 fw-bold shadow">
+                            Proceed to Booking
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning bg-transparent border-warning text-warning text-center">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Tickets are not yet available for this event.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a asp-action="AllEvents" class="btn btn-outline-light"><i class="bi bi-arrow-left"></i> Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>

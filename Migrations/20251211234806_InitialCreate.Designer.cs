@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookM.Migrations
 {
     [DbContext(typeof(BookMContext))]
-    [Migration("20251121104838_AddCategoryToEvent")]
-    partial class AddCategoryToEvent
+    [Migration("20251211234806_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,6 +72,28 @@ namespace BookM.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Category");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            Name = "Cinema"
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            Name = "Concert"
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            Name = "Sport"
+                        },
+                        new
+                        {
+                            CategoryId = 4,
+                            Name = "Theater"
+                        });
                 });
 
             modelBuilder.Entity("BookM.Models.Event", b =>
@@ -117,6 +139,56 @@ namespace BookM.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Event", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            EventId = 1,
+                            Capacity = 50000,
+                            CategoryId = 2,
+                            Description = "The biggest music festival in Morocco returns.",
+                            EventDate = new DateTime(2025, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "https://images.unsplash.com/photo-1459749411177-2a296581dca0?auto=format&fit=crop&w=600&q=80",
+                            Location = "OLM Souissi, Rabat",
+                            Ltype = "Outdoor",
+                            Title = "Mawazine Festival - Opening Night"
+                        },
+                        new
+                        {
+                            EventId = 2,
+                            Capacity = 45000,
+                            CategoryId = 3,
+                            Description = "The most anticipated football match of the season.",
+                            EventDate = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80",
+                            Location = "Complexe Mohammed V, Casablanca",
+                            Ltype = "Stadium",
+                            Title = "Wydad vs Raja - The Derby"
+                        },
+                        new
+                        {
+                            EventId = 3,
+                            Capacity = 200,
+                            CategoryId = 1,
+                            Description = "Watch the Christopher Nolan masterpiece in IMAX.",
+                            EventDate = new DateTime(2025, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80",
+                            Location = "Megarama, Casablanca",
+                            Ltype = "Indoor",
+                            Title = "Inception - Special Screening"
+                        },
+                        new
+                        {
+                            EventId = 4,
+                            Capacity = 1500,
+                            CategoryId = 4,
+                            Description = "An evening of laughter with the best comedians.",
+                            EventDate = new DateTime(2025, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?auto=format&fit=crop&w=600&q=80",
+                            Location = "Palais El Badi, Marrakech",
+                            Ltype = "Outdoor",
+                            Title = "Marrakech du Rire"
+                        });
                 });
 
             modelBuilder.Entity("BookM.Models.Payment", b =>
@@ -215,6 +287,16 @@ namespace BookM.Migrations
                         .IsUnique();
 
                     b.ToTable("User", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            Email = "admin@bookm.com",
+                            IsAdmin = true,
+                            Name = "System Admin",
+                            PasswordHash = "pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM="
+                        });
                 });
 
             modelBuilder.Entity("BookM.Models.Booking", b =>
