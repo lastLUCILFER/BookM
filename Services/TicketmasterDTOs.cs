@@ -1,4 +1,4 @@
-﻿namespace BookM.Services
+﻿  namespace BookM.Services
 {
     // These classes match the JSON structure from Ticketmaster
     public class TicketmasterResponse

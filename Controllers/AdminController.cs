@@ -12,10 +12,13 @@ namespace BookM.Controllers
     {
         private readonly BookMContext _context;
         private readonly TicketmasterService _tmService;
-        public AdminController(BookMContext context, TicketmasterService tmService)
+        private readonly Neo4jService _neo4jService;
+
+        public AdminController(BookMContext context, TicketmasterService tmService, Neo4jService neo4jService)
         {
             _context = context;
             _tmService = tmService;
+            _neo4jService = neo4jService;
         }
 
         public async Task<IActionResult> Index()
@@ -59,6 +62,7 @@ namespace BookM.Controllers
                 var category = new Category { Name = name };
                 _context.Category.Add(category);
                 await _context.SaveChangesAsync();
+                await _neo4jService.CreateCategoryAsync(category);
             }
            
             return RedirectToAction(nameof(ManageCategories));
@@ -119,6 +123,7 @@ namespace BookM.Controllers
             {
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
+                await _neo4jService.CreateEventAsync(@event);
                 return RedirectToAction(nameof(ManageEvents));
             }
 

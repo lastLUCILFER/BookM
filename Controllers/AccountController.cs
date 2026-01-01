@@ -12,10 +12,12 @@ namespace BookM.Controllers
     {
 
         private readonly BookMContext _context;
+        private readonly BookM.Services.Neo4jService _neo4jService;
 
-        public AccountController(BookMContext context)
+        public AccountController(BookMContext context, BookM.Services.Neo4jService neo4jService)
         {
             _context = context;
+            _neo4jService = neo4jService;
         }
 
         public IActionResult Login()
@@ -64,7 +66,7 @@ namespace BookM.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(string name, string email, string password)
+        public async Task<IActionResult> Register(string name, string email, string password)
         {
             // Password Validation
             if (password.Length < 6)
@@ -97,7 +99,17 @@ namespace BookM.Controllers
             };
 
             _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            
+            try 
+            {
+                await _neo4jService.CreateUserAsync(user);
+            }
+            catch (Exception ex)
+            {
+                 Console.WriteLine($"Failed to sync user to Neo4j: {ex.Message}");
+            }
+
             return RedirectToAction("Login");
         }
 

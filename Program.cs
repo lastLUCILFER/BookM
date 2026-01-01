@@ -19,6 +19,20 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 builder.Services.AddHttpClient<BookM.Services.TicketmasterService>();
 builder.Services.AddScoped<BookM.Services.TicketmasterService>();
+
+// Neo4j Configuration
+var neo4jConfig = builder.Configuration.GetSection("Neo4j");
+var uri = neo4jConfig["Uri"];
+var user = neo4jConfig["User"];
+var password = neo4jConfig["Password"];
+
+if (!string.IsNullOrEmpty(uri) && !string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(password))
+{
+    builder.Services.AddSingleton<Neo4j.Driver.IDriver>(provider => 
+        Neo4j.Driver.GraphDatabase.Driver(uri, Neo4j.Driver.AuthTokens.Basic(user, password)));
+    builder.Services.AddScoped<BookM.Services.Neo4jService>();
+}
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
