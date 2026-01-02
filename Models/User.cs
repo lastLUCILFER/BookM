@@ -24,4 +24,6 @@ public partial class User
 
 
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    public string? VerificationToken { get; set; }
+    public bool IsEmailVerified { get; set; } = false;
 }

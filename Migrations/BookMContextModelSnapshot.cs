@@ -224,6 +224,9 @@ namespace BookM.Migrations
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsEmailVerified")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -233,6 +236,9 @@ namespace BookM.Migrations
                         .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("VerificationToken")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId")
                         .HasName("PK__User__1788CC4CD64AA4CC");
@@ -248,6 +254,7 @@ namespace BookM.Migrations
                             UserId = 1,
                             Email = "admin@bookm.com",
                             IsAdmin = true,
+                            IsEmailVerified = true,
                             Name = "System Admin",
                             PasswordHash = "pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM="
                         });

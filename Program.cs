@@ -1,5 +1,6 @@
 using System;
 using BookM.Models;
+using BookM.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +33,8 @@ if (!string.IsNullOrEmpty(uri) && !string.IsNullOrEmpty(user) && !string.IsNullO
         Neo4j.Driver.GraphDatabase.Driver(uri, Neo4j.Driver.AuthTokens.Basic(user, password)));
     builder.Services.AddScoped<BookM.Services.Neo4jService>();
 }
+
+builder.Services.AddScoped<IEmailSender,EmailSender>();
 
 builder.Services.AddControllersWithViews();
 

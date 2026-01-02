@@ -31,6 +31,16 @@
             </div>
             <div class="card-body p-4">
 
+                @if (TempData["Message"] != null)
+                {
+                    <div class="alert alert-success text-center">@TempData["Message"]</div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger text-center">@TempData["Error"]</div>
+                }
+
                 @if (ViewBag.Error != null)
                 {
                     <div class="alert alert-danger text-center">@ViewBag.Error</div>
@@ -51,7 +61,7 @@
                 </form>
 
                 <div class="text-center mt-3">
-                    <span class="text-muted">Don't have an account?</span> 
+                    <span class="text-muted">Don't have an account?</span>
                     <a asp-action="Register" class="text-decoration-none fw-bold text-dark">Sign Up</a>
                 </div>
             </div>

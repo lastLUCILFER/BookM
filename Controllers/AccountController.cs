@@ -1,10 +1,12 @@
 ﻿using System.Security.Claims;
 using System.Security.Cryptography; 
 using System.Text;
+using BookM.Models;
+using BookM.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using BookM.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookM.Controllers
 {
@@ -13,15 +15,21 @@ namespace BookM.Controllers
 
         private readonly BookMContext _context;
         private readonly BookM.Services.Neo4jService _neo4jService;
+        private readonly IEmailSender _emailSender;
 
-        public AccountController(BookMContext context, BookM.Services.Neo4jService neo4jService)
+        public AccountController(BookMContext context, BookM.Services.Neo4jService neo4jService, IEmailSender emailSender)
         {
             _context = context;
             _neo4jService = neo4jService;
+            _emailSender = emailSender;
         }
 
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -32,6 +40,12 @@ namespace BookM.Controllers
 
             if (user != null && user.PasswordHash == HashPassword(password))
             {
+                if (!user.IsEmailVerified)
+                {
+                    ViewBag.Error = "Please verify your email address before logging in.";
+                    return View();
+                }
+
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
@@ -62,6 +76,10 @@ namespace BookM.Controllers
 
         public IActionResult Register()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -85,33 +103,66 @@ namespace BookM.Controllers
                 return View();
             }
 
-            if (_context.Users.Any(u => u.Email == email))
+            if (await _context.Users.AnyAsync(u => u.Email == email))
             {
                 ViewBag.Error = "Email already registered.";
                 return View();
             }
 
+            var token = Guid.NewGuid().ToString();
+
             var user = new User
             {
                 Name = name,
                 Email = email,
-                PasswordHash = HashPassword(password)
+                PasswordHash = HashPassword(password),
+                VerificationToken = token,
+                IsEmailVerified = false
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            
-            try 
+           
+
+            var verificationLink = Url.Action("VerifyEmail", "Account",
+                new { token = token, email = email }, Request.Scheme);
+
+            await _emailSender.SendEmailAsync(email, "Verify your BookM Account",
+                $"Please verify your email by clicking <a href='{verificationLink}'>here</a>.");
+
+            return RedirectToAction("CheckEmail");
+        }
+        [HttpGet]
+        public IActionResult CheckEmail()
+        {
+            return View();
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyEmail(string token, string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            // Check if user exists and token matches
+            if (user != null && user.VerificationToken == token)
             {
-                await _neo4jService.CreateUserAsync(user);
-            }
-            catch (Exception ex)
-            {
-                 Console.WriteLine($"Failed to sync user to Neo4j: {ex.Message}");
+                user.IsEmailVerified = true;
+                user.VerificationToken = null; // Clear token so it can't be used twice
+                await _context.SaveChangesAsync();
+
+                // Sync to Neo4j ONLY after they are verified (Optional, but cleaner)
+                try { await _neo4jService.CreateUserAsync(user); } catch { }
+
+                TempData["Message"] = "Email verified successfully! You can now login.";
+                return RedirectToAction("Login"); // Send them to Login page with success message
             }
 
-            return RedirectToAction("Login");
+            TempData["Error"] = "Invalid verification link or already verified.";
+            return RedirectToAction("Login"); 
         }
+
+
 
         public async Task<IActionResult> Logout()
         {

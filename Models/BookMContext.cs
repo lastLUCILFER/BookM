@@ -90,7 +90,8 @@ public partial class BookMContext : DbContext
                 Name = "System Admin",
                 Email = "admin@bookm.com",
                 PasswordHash = "pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM=",
-                IsAdmin = true
+                IsAdmin = true,
+                IsEmailVerified = true
             }
         );
 
